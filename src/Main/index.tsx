@@ -31,6 +31,9 @@ export function Main() {
   }
 
   function handleAddToCart(product: Product) {
+    if (!selectedTable) {
+      setIsTableModalVisible(true);
+    }
     alert(product.name);
   }
 
