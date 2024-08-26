@@ -25,7 +25,6 @@ interface ProductModalProps {
 }
 
 export function ProductModal({ visible, onClose, product, onAddToCart }: ProductModalProps) {
-  console.log(product);
   if(!product) {
     return null;
   }
