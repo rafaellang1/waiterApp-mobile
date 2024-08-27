@@ -4,6 +4,7 @@ import {
   MenuContainer,
   Footer,
   FooterContainer,
+  CenteredContainer,
 } from './styles';
 
 import { Header } from '../components/Header';
@@ -15,19 +16,22 @@ import { useState } from 'react';
 import { Cart } from '../components/Cart';
 import { CartItem } from '../types/CartItem';
 import { Product } from '../types/Product';
+import { ActivityIndicator } from 'react-native';
 
 export function Main() {
   const [isTableModalVisible, setIsTableModalVisible] = useState(false);
   const [selectedTable, setSelectedTable] = useState('');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading] = useState(false);
 
 
   function handleSaveTable(table: string) {
     setSelectedTable(table);
   }
 
-  function handleCancelOrder() {
+  function handleResetOrder() {
     setSelectedTable('');
+    setCartItems([]);
   }
 
   function handleAddToCart(product: Product) {
@@ -87,22 +91,35 @@ export function Main() {
       <Container>
         <Header
           selectedTable={selectedTable}
-          onCancelOrder={handleCancelOrder}
+          onCancelOrder={handleResetOrder}
         />
 
-        <CategoriesContainer>
-          <Categories />
-        </CategoriesContainer>
+        {isLoading && (
+          <CenteredContainer>
+            <ActivityIndicator color="#D73035" size="large"/>
+          </CenteredContainer>
+        )}
 
-        <MenuContainer>
-          <Menu onAddToCart={handleAddToCart}/>
-        </MenuContainer>
+        {!isLoading && (
+          <>
+            <CategoriesContainer>
+              <Categories />
+            </CategoriesContainer>
+
+            <MenuContainer>
+              <Menu onAddToCart={handleAddToCart}/>
+            </MenuContainer>
+          </>
+        )}
       </Container>
 
       <Footer>
         <FooterContainer>
           {!selectedTable && (
-            <Button onPress={() => setIsTableModalVisible(true)}>
+            <Button
+              onPress={() => setIsTableModalVisible(true)}
+              disabled={isLoading}
+            >
             Novo Pedido
             </Button>
           )}
@@ -112,6 +129,7 @@ export function Main() {
               cartItems={cartItems}
               onAdd={handleAddToCart}
               onDecrement={handleDecrementCartItem}
+              onConfirmOrder={handleResetOrder}
             />
           )}
         </FooterContainer>
